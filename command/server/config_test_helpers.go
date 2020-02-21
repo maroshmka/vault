@@ -23,10 +23,8 @@ func testConfigRaftRetryJoin(t *testing.T) {
 		SharedConfig: &configutil.SharedConfig{
 			Listeners: []*configutil.Listener{
 				{
-					Type: "tcp",
-					Config: map[string]interface{}{
-						"address": "127.0.0.1:8200",
-					},
+					Type:    "tcp",
+					Address: "127.0.0.1:8200",
 				},
 			},
 			DisableMlock:    true,
@@ -57,10 +55,8 @@ func testLoadConfigFile_topLevel(t *testing.T, entropy *configutil.Entropy) {
 		SharedConfig: &configutil.SharedConfig{
 			Listeners: []*configutil.Listener{
 				{
-					Type: "tcp",
-					Config: map[string]interface{}{
-						"address": "127.0.0.1:443",
-					},
+					Type:    "tcp",
+					Address: "127.0.0.1:443",
 				},
 			},
 
@@ -145,16 +141,12 @@ func testLoadConfigFile_json2(t *testing.T, entropy *configutil.Entropy) {
 		SharedConfig: &configutil.SharedConfig{
 			Listeners: []*configutil.Listener{
 				{
-					Type: "tcp",
-					Config: map[string]interface{}{
-						"address": "127.0.0.1:443",
-					},
+					Type:    "tcp",
+					Address: "127.0.0.1:443",
 				},
 				{
-					Type: "tcp",
-					Config: map[string]interface{}{
-						"address": "127.0.0.1:444",
-					},
+					Type:    "tcp",
+					Address: "127.0.0.1:444",
 				},
 			},
 
@@ -293,10 +285,8 @@ func testLoadConfigFile(t *testing.T) {
 		SharedConfig: &configutil.SharedConfig{
 			Listeners: []*configutil.Listener{
 				{
-					Type: "tcp",
-					Config: map[string]interface{}{
-						"address": "127.0.0.1:443",
-					},
+					Type:    "tcp",
+					Address: "127.0.0.1:443",
 				},
 			},
 
@@ -377,10 +367,8 @@ func testLoadConfigFile_json(t *testing.T) {
 		SharedConfig: &configutil.SharedConfig{
 			Listeners: []*configutil.Listener{
 				{
-					Type: "tcp",
-					Config: map[string]interface{}{
-						"address": "127.0.0.1:443",
-					},
+					Type:    "tcp",
+					Address: "127.0.0.1:443",
 				},
 			},
 
@@ -456,10 +444,8 @@ func testLoadConfigDir(t *testing.T) {
 
 			Listeners: []*configutil.Listener{
 				{
-					Type: "tcp",
-					Config: map[string]interface{}{
-						"address": "127.0.0.1:443",
-					},
+					Type:    "tcp",
+					Address: "127.0.0.1:443",
 				},
 			},
 
@@ -622,18 +608,15 @@ listener "tcp" {
 		SharedConfig: &configutil.SharedConfig{
 			Listeners: []*configutil.Listener{
 				{
-					Type: "tcp",
-					Config: map[string]interface{}{
-						"address":                            "127.0.0.1:443",
-						"cluster_address":                    "127.0.0.1:8201",
-						"tls_disable":                        false,
-						"tls_cert_file":                      "./certs/server.crt",
-						"tls_key_file":                       "./certs/server.key",
-						"tls_client_ca_file":                 "./certs/rootca.crt",
-						"tls_min_version":                    "tls12",
-						"tls_require_and_verify_client_cert": true,
-						"tls_disable_client_certs":           true,
-					},
+					Type:                          "tcp",
+					Address:                       "127.0.0.1:443",
+					ClusterAddress:                "127.0.0.1:8201",
+					TLSCertFile:                   "./certs/server.crt",
+					TLSKeyFile:                    "./certs/server.key",
+					TLSClientCAFile:               "./certs/rootca.crt",
+					TLSMinVersion:                 "tls12",
+					TLSRequireAndVerifyClientCert: true,
+					TLSDisableClientCerts:         true,
 				},
 			},
 		},

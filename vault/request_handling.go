@@ -14,6 +14,7 @@ import (
 	sockaddr "github.com/hashicorp/go-sockaddr"
 	"github.com/hashicorp/vault/helper/identity"
 	"github.com/hashicorp/vault/helper/namespace"
+	"github.com/hashicorp/vault/internalshared/configutil"
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/helper/consts"
 	"github.com/hashicorp/vault/sdk/helper/errutil"
@@ -41,8 +42,7 @@ var (
 // It's in this package to avoid a circular dependency
 type HandlerProperties struct {
 	Core                         *Core
-	MaxRequestSize               int64
-	MaxRequestDuration           time.Duration
+	ListenerConfig               *configutil.Listener
 	DisablePrintableCheck        bool
 	RecoveryMode                 bool
 	RecoveryToken                *uberAtomic.String

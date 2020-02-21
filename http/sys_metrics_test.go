@@ -33,7 +33,6 @@ func TestSysMetricsUnauthenticated(t *testing.T) {
 	ln, addr = TestListener(t)
 	props := &vault.HandlerProperties{
 		Core:                         core,
-		MaxRequestSize:               DefaultMaxRequestSize,
 		UnauthenticatedMetricsAccess: true,
 	}
 	TestServerWithListenerAndProperties(t, ln, addr, core, props)

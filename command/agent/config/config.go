@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/hcl"
 	"github.com/hashicorp/hcl/hcl/ast"
 	"github.com/hashicorp/vault/helper/namespace"
+	"github.com/hashicorp/vault/internalshared/configutil"
 	"github.com/hashicorp/vault/sdk/helper/parseutil"
 	"github.com/mitchellh/mapstructure"
 )
@@ -23,7 +24,7 @@ type Config struct {
 	AutoAuth      *AutoAuth                  `hcl:"auto_auth"`
 	ExitAfterAuth bool                       `hcl:"exit_after_auth"`
 	PidFile       string                     `hcl:"pid_file"`
-	Listeners     []*Listener                `hcl:"listeners"`
+	Listeners     []*configutil.Listener     `hcl:"listeners"`
 	Cache         *Cache                     `hcl:"cache"`
 	Vault         *Vault                     `hcl:"vault"`
 	Templates     []*ctconfig.TemplateConfig `hcl:"templates"`
@@ -47,15 +48,6 @@ type Cache struct {
 	UseAutoAuthToken    bool        `hcl:"-"`
 	ForceAutoAuthToken  bool        `hcl:"-"`
 }
-
-// Listener contains configuration for any Vault Agent listeners
-type Listener struct {
-	Type   string
-	Config map[string]interface{}
-}
-
-// RequireRequestHeader is a listener configuration option
-const RequireRequestHeader = "require_request_header"
 
 // AutoAuth is the configured authentication method and sinks
 type AutoAuth struct {
@@ -128,9 +120,11 @@ func LoadConfig(path string) (*Config, error) {
 		return nil, errwrap.Wrapf("error parsing 'auto_auth': {{err}}", err)
 	}
 
-	if err := parseListeners(&result, list); err != nil {
+	var sharedConfig configutil.SharedConfig
+	if err := configutil.ParseListeners(&sharedConfig, list); err != nil {
 		return nil, errwrap.Wrapf("error parsing 'listeners': {{err}}", err)
 	}
+	result.Listeners = sharedConfig.Listeners
 
 	if err := parseCache(&result, list); err != nil {
 		return nil, errwrap.Wrapf("error parsing 'cache':{{err}}", err)
@@ -242,47 +236,6 @@ func parseCache(result *Config, list *ast.ObjectList) error {
 	}
 
 	result.Cache = &c
-	return nil
-}
-
-func parseListeners(result *Config, list *ast.ObjectList) error {
-	name := "listener"
-
-	listenerList := list.Filter(name)
-
-	var listeners []*Listener
-	for _, item := range listenerList.Items {
-		var lnConfig map[string]interface{}
-		err := hcl.DecodeObject(&lnConfig, item.Val)
-		if err != nil {
-			return err
-		}
-
-		var lnType string
-		switch {
-		case lnConfig["type"] != nil:
-			lnType = lnConfig["type"].(string)
-			delete(lnConfig, "type")
-		case len(item.Keys) == 1:
-			lnType = strings.ToLower(item.Keys[0].Token.Value().(string))
-		default:
-			return errors.New("listener type must be specified")
-		}
-
-		switch lnType {
-		case "unix", "tcp":
-		default:
-			return fmt.Errorf("invalid listener type %q", lnType)
-		}
-
-		listeners = append(listeners, &Listener{
-			Type:   lnType,
-			Config: lnConfig,
-		})
-	}
-
-	result.Listeners = listeners
-
 	return nil
 }
 
