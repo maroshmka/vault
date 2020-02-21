@@ -2,10 +2,11 @@ package http
 
 import (
 	"fmt"
+	"net/http"
+
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/vault/command/monitor"
 	"github.com/hashicorp/vault/vault"
-	"net/http"
 )
 
 func handleSysMonitor(core *vault.Core) http.Handler {
@@ -17,7 +18,7 @@ func handleSysMonitor(core *vault.Core) http.Handler {
 		logLevel := log.LevelFromString(ll)
 
 		if logLevel == log.NoLevel {
-			respondError(w, http.StatusBadRequest, fmt.Errorf("invalid log level"))
+			respondError(w, http.StatusBadRequest, fmt.Errorf("unknown log level"))
 			return
 		}
 
